@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Android-style calculator PWA with a hidden notes mode." />
+  <title>Calculator</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="callogo.png" />
+  <link rel="apple-touch-icon" href="callogo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="phone-frame">
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <span>📶</span>
+          <span>🔋</span>
+        </div>
+      </div>
+
+      <section id="calculatorView" class="view active" aria-label="Calculator">
+        <header class="app-header">
+          <div>
+            <p class="eyebrow">Calculator</p>
+            <h1>Standard</h1>
+          </div>
+          <button id="installBtn" class="ghost-btn hidden" type="button">Install</button>
+        </header>
+
+        <div class="display-wrap">
+          <div id="history" class="history" aria-live="polite"></div>
+          <div id="display" class="display" aria-live="polite">0</div>
+        </div>
+
+        <div class="keypad" aria-label="Calculator keypad">
+          <button class="key utility" data-action="clear">AC</button>
+          <button class="key utility" data-action="toggle-sign">+/-</button>
+          <button class="key utility" data-action="percent">%</button>
+          <button class="key operator" data-value="/">÷</button>
+
+          <button class="key" data-value="7">7</button>
+          <button class="key" data-value="8">8</button>
+          <button class="key" data-value="9">9</button>
+          <button class="key operator" data-value="*">×</button>
+
+          <button class="key" data-value="4">4</button>
+          <button class="key" data-value="5">5</button>
+          <button class="key" data-value="6">6</button>
+          <button class="key operator" data-value="-">−</button>
+
+          <button class="key" data-value="1">1</button>
+          <button class="key" data-value="2">2</button>
+          <button class="key" data-value="3">3</button>
+          <button class="key operator" data-value="+">+</button>
+
+          <button class="key utility span-2" data-value="0">0</button>
+          <button class="key" data-value=".">.</button>
+          <button class="key operator equals" data-action="equals">=</button>
+        </div>
+      </section>
+
+      <section id="notesView" class="view" aria-label="Notes">
+        <header class="notes-header">
+          <div>
+            <p class="eyebrow">Private Space</p>
+            <h2>Notes</h2>
+          </div>
+          <button id="backToCalcBtn" class="ghost-btn" type="button" title="Return to calculator">Calculator</button>
+        </header>
+
+        <section class="notes-panel">
+          <aside class="notes-sidebar">
+            <button id="newNoteBtn" class="primary-btn" type="button">+ New note</button>
+            <div id="notesList" class="notes-list" aria-label="Saved notes"></div>
+          </aside>
+
+          <section class="editor-panel">
+            <input id="noteTitle" class="note-title-input" type="text" placeholder="Note title" maxlength="80" />
+            <textarea id="noteBody" class="note-body-input" placeholder="Write something..."></textarea>
+            <div class="editor-actions">
+              <button id="saveNoteBtn" class="primary-btn" type="button">Save</button>
+              <button id="deleteNoteBtn" class="danger-btn" type="button">Delete</button>
+            </div>
+          </section>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
