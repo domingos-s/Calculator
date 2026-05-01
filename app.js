@@ -101,10 +101,10 @@ if ("serviceWorker" in navigator) {
 }
 
 function handleKeyPress(key) {
-  const { value, action, fn } = key.dataset;
+  const { value, action, fn, template } = key.dataset;
 
   if (fn) {
-    appendFinanceFunction(fn);
+    appendFinanceFunction(fn, template);
     return;
   }
 
@@ -137,12 +137,13 @@ function handleKeyPress(key) {
   }
 }
 
-function appendFinanceFunction(fnName) {
+function appendFinanceFunction(fnName, template) {
   if (lastResult !== null && expression === String(lastResult)) {
     expression = "";
     lastResult = null;
   }
-  expression += fnName;
+  expression += `${fnName}(`;
+  historyEl.textContent = template ? `Enter: ${template}` : "Enter finance inputs";
   renderCalculator();
 }
 
@@ -225,7 +226,7 @@ function evaluateExpression() {
       throw new Error("Invalid characters");
     }
 
-    const result = Function("pv", "fv", "pmt", `"use strict"; return (${sanitized})`)(pv, fv, pmt);
+    const result = Function("pv", "fv", "pmt", "n", "i", `"use strict"; return (${sanitized})`)(pv, fv, pmt, n, i);
     if (result === undefined || Number.isNaN(result) || !Number.isFinite(result)) {
       throw new Error("Invalid result");
     }
@@ -357,6 +358,30 @@ function pmt(rate, periods, presentValue, futureValue = 0) {
   if (r === 0) return -(pvValue + fvValue) / n;
   const growth = (1 + r) ** n;
   return -((pvValue * growth + fvValue) * r / (growth - 1));
+}
+
+
+function n(rate, presentValue, futureValue) {
+  const r = Number(rate);
+  const pvValue = Number(presentValue);
+  const fvValue = Number(futureValue);
+  if ([r, pvValue, fvValue].some((num) => Number.isNaN(num))) throw new Error("Invalid N input");
+  if (r <= -1 || r === 0 || pvValue === 0 || fvValue === 0) throw new Error("Invalid N input");
+  const ratio = -fvValue / pvValue;
+  if (ratio <= 0) throw new Error("Invalid N input");
+  return Math.log(ratio) / Math.log(1 + r);
+}
+
+function i(periods, presentValue, futureValue) {
+  const nPeriods = Number(periods);
+  const pvValue = Number(presentValue);
+  const fvValue = Number(futureValue);
+  if ([nPeriods, pvValue, fvValue].some((num) => Number.isNaN(num)) || nPeriods <= 0 || pvValue === 0) {
+    throw new Error("Invalid I input");
+  }
+  const ratio = -fvValue / pvValue;
+  if (ratio <= 0) throw new Error("Invalid I input");
+  return ratio ** (1 / nPeriods) - 1;
 }
 
 function isOperator(char) {
