@@ -1,4 +1,4 @@
-# Calculator Notes PWA
+# Calculator PWA
 
 A lightweight Android-style calculator clone that secretly opens a notes app when the exact calculation `1+7+2+9` is entered and `=` is pressed.
 

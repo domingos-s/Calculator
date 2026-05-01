@@ -1,6 +1,6 @@
 const SECRET_EXPRESSION = "1+7+2+9";
-const NOTES_STORAGE_KEY = "calc-notes-pwa-notes";
-const LAST_NOTE_STORAGE_KEY = "calc-notes-pwa-last-note";
+const NOTES_STORAGE_KEY = "calculator-pwa-notes";
+const LAST_NOTE_STORAGE_KEY = "calculator-pwa-last-note";
 
 const calculatorView = document.getElementById("calculatorView");
 const notesView = document.getElementById("notesView");

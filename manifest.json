@@ -1,7 +1,7 @@
 {
-  "name": "Calculator Notes",
-  "short_name": "CalcNotes",
-  "description": "Android-style calculator PWA with a hidden notes mode unlocked by a specific calculation.",
+  "name": "Calculator",
+  "short_name": "Calculator",
+  "description": "Android-style calculator PWA with a hidden mode unlocked by a specific calculation.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0b1220",
