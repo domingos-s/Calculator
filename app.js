@@ -101,7 +101,12 @@ if ("serviceWorker" in navigator) {
 }
 
 function handleKeyPress(key) {
-  const { value, action } = key.dataset;
+  const { value, action, fn } = key.dataset;
+
+  if (fn) {
+    appendFinanceFunction(fn);
+    return;
+  }
 
   if (value) {
     appendValue(value);
@@ -124,9 +129,30 @@ function handleKeyPress(key) {
     case "equals":
       evaluateExpression();
       break;
+    case "backspace":
+      backspace();
+      break;
     default:
       break;
   }
+}
+
+function appendFinanceFunction(fnName) {
+  if (lastResult !== null && expression === String(lastResult)) {
+    expression = "";
+    lastResult = null;
+  }
+  expression += fnName;
+  renderCalculator();
+}
+
+function backspace() {
+  if (!expression) return;
+  expression = expression.slice(0, -1);
+  if (!expression) {
+    lastResult = null;
+  }
+  renderCalculator();
 }
 
 function appendValue(value) {
@@ -195,11 +221,11 @@ function evaluateExpression() {
 
   try {
     const sanitized = expression.replace(/×/g, "*").replace(/÷/g, "/");
-    if (!/^[0-9+\-*/.() ]+$/.test(sanitized)) {
+    if (!/^[0-9+\-*/.,() a-zA-Z]+$/.test(sanitized)) {
       throw new Error("Invalid characters");
     }
 
-    const result = Function(`"use strict"; return (${sanitized})`)();
+    const result = Function("pv", "fv", "pmt", `"use strict"; return (${sanitized})`)(pv, fv, pmt);
     if (result === undefined || Number.isNaN(result) || !Number.isFinite(result)) {
       throw new Error("Invalid result");
     }
@@ -299,6 +325,38 @@ function updateDraftTimestamp() {
   note.updatedAt = Date.now();
   persistNotes();
   renderNotes();
+}
+
+
+function pv(rate, periods, payment, futureValue = 0) {
+  const r = Number(rate);
+  const n = Number(periods);
+  const pmtValue = Number(payment);
+  const fvValue = Number(futureValue);
+  if ([r, n, pmtValue, fvValue].some((num) => Number.isNaN(num)) || n <= 0) throw new Error("Invalid PV input");
+  if (r === 0) return -(fvValue + pmtValue * n);
+  return -((fvValue + pmtValue * ((1 + r) ** n - 1) / r) / ((1 + r) ** n));
+}
+
+function fv(rate, periods, payment, presentValue = 0) {
+  const r = Number(rate);
+  const n = Number(periods);
+  const pmtValue = Number(payment);
+  const pvValue = Number(presentValue);
+  if ([r, n, pmtValue, pvValue].some((num) => Number.isNaN(num)) || n <= 0) throw new Error("Invalid FV input");
+  if (r === 0) return -(pvValue + pmtValue * n);
+  return -(pvValue * ((1 + r) ** n) + pmtValue * (((1 + r) ** n - 1) / r));
+}
+
+function pmt(rate, periods, presentValue, futureValue = 0) {
+  const r = Number(rate);
+  const n = Number(periods);
+  const pvValue = Number(presentValue);
+  const fvValue = Number(futureValue);
+  if ([r, n, pvValue, fvValue].some((num) => Number.isNaN(num)) || n <= 0) throw new Error("Invalid PMT input");
+  if (r === 0) return -(pvValue + fvValue) / n;
+  const growth = (1 + r) ** n;
+  return -((pvValue * growth + fvValue) * r / (growth - 1));
 }
 
 function isOperator(char) {
